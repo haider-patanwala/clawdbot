@@ -8,7 +8,7 @@ RUN corepack enable
 
 WORKDIR /app
 
-ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg jq rg"
+ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg jq"
 RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       apt-get update && \
       DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
