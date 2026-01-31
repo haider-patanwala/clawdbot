@@ -8,7 +8,7 @@ RUN corepack enable
 
 WORKDIR /app
 
-ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg"
+ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg jq rg"
 RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       apt-get update && \
       DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
@@ -30,12 +30,16 @@ RUN curl -L https://github.com/haider-patanwala/wacli/releases/download/v0.2.3/w
 RUN curl -L https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.aarch64-linux.tgz \
   | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/himalaya
 
+RUN curl -L https://github.com/cli/cli/releases/download/v2.86.0/gh_2.86.0_linux_arm64.tar.gz \
+  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gh
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY ui/package.json ./ui/package.json
 COPY patches ./patches
 COPY scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
+RUN pnpm install -g @steipete/summarize gitload-cli
 
 COPY . .
 RUN OPENCLAW_A2UI_SKIP_MISSING=1 pnpm build
