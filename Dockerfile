@@ -8,6 +8,7 @@ RUN corepack enable
 
 WORKDIR /app
 
+# install packages
 ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg jq"
 RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       apt-get update && \
@@ -16,6 +17,10 @@ RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
     fi
 
+# add alias to bashrc
+RUN if ! grep -qxF "alias openclaw='node /app/dist/index.js'" /etc/bash.bashrc; then \
+    echo "alias openclaw='node /app/dist/index.js'" >> /etc/bash.bashrc; \
+  fi
 
 # binaries (edit as needed)
 RUN curl -L https://github.com/steipete/gogcli/releases/download/v0.9.0/gogcli_0.9.0_linux_arm64.tar.gz \
