@@ -8,13 +8,27 @@ RUN corepack enable
 
 WORKDIR /app
 
-ARG OPENCLAW_DOCKER_APT_PACKAGES=""
-RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
-      apt-get update && \
-      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
-    fi
+# ARG OPENCLAW_DOCKER_APT_PACKAGES=""
+# RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
+#       apt-get update && \
+#       DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
+#       apt-get clean && \
+#       rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
+#     fi
+
+
+# binaries (edit as needed)
+RUN curl -L https://github.com/steipete/gogcli/releases/download/v0.9.0/gogcli_0.9.0_linux_arm64.tar.gz \
+  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gog
+
+RUN curl -L https://github.com/steipete/goplaces/releases/download/v0.2.1/goplaces_0.2.1_linux_arm64.tar.gz \
+  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/goplaces
+
+RUN curl -L https://github.com/haider-patanwala/wacli/releases/download/v0.2.3/wacli-linux-arm64.tar.gz \
+  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/wacli
+
+RUN curl -L https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.aarch64-linux.tgz \
+  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/himalaya
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY ui/package.json ./ui/package.json
@@ -34,6 +48,6 @@ ENV NODE_ENV=production
 # Security hardening: Run as non-root user
 # The node:22-bookworm image includes a 'node' user (uid 1000)
 # This reduces the attack surface by preventing container escape via root privileges
-USER node
+# USER node
 
 CMD ["node", "dist/index.js"]
