@@ -44,7 +44,7 @@ COPY patches ./patches
 COPY scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm install -g @steipete/summarize gitload-cli
+RUN npm install -g @steipete/summarize gitload-cli
 
 COPY . .
 RUN OPENCLAW_A2UI_SKIP_MISSING=1 pnpm build
