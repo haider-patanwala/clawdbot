@@ -30,8 +30,13 @@ RUN curl -L https://github.com/haider-patanwala/wacli/releases/download/v0.2.3/w
 RUN curl -L https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.aarch64-linux.tgz \
   | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/himalaya
 
-RUN curl -L https://github.com/cli/cli/releases/download/v2.86.0/gh_2.86.0_linux_arm64.tar.gz \
-  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gh
+# RUN curl -L https://github.com/cli/cli/releases/download/v2.86.0/gh_2.86.0_linux_arm64.tar.gz \
+#   | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gh
+
+RUN set -eux; \
+  curl -L "https://github.com/cli/cli/releases/download/v2.86.0/gh_2.86.0_linux_arm64.tar.gz" \
+  | tar -xz -C /usr/local/bin --strip-components=2 "gh_2.86.0_linux_arm64/bin/gh"; \
+  chmod +x /usr/local/bin/gh
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY ui/package.json ./ui/package.json
