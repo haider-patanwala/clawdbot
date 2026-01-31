@@ -3,6 +3,7 @@ services:
     image: clawdbot:latest
     build: .
     restart: unless-stopped
+    user: node
     env_file:
       - .env
     environment:
