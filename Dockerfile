@@ -62,7 +62,7 @@ COPY patches ./patches
 COPY scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
-RUN npm install -g @steipete/summarize gitload-cli clawdhub
+RUN npm install -g @steipete/summarize gitload-cli agent-browser
 
 COPY . .
 RUN pnpm build
