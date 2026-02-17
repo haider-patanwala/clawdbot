@@ -9,7 +9,7 @@ RUN corepack enable
 WORKDIR /app
 
 # install packages
-ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg jq undici"
+ARG OPENCLAW_DOCKER_APT_PACKAGES="nano ffmpeg jq"
 RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       apt-get update && \
       DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
@@ -62,7 +62,7 @@ COPY patches ./patches
 COPY scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
-RUN npm install -g @steipete/summarize gitload-cli agent-browser
+RUN npm install -g @steipete/summarize gitload-cli undici agent-browser clawdhub
 
 COPY . .
 RUN pnpm build
