@@ -62,7 +62,7 @@ COPY patches ./patches
 COPY scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
-RUN npm install -g @steipete/summarize gitload-cli undici agent-browser clawdhub
+RUN npm install -g @steipete/summarize gitload-cli undici agent-browser clawhub
 
 # Optionally install Chromium and Xvfb for browser automation.
 # Build with: docker build --build-arg OPENCLAW_INSTALL_BROWSER=1 ...
