@@ -124,6 +124,8 @@ export function makeCfg(home: string): OpenClawConfig {
       defaults: {
         model: { primary: "anthropic/claude-opus-4-5" },
         workspace: join(home, "openclaw"),
+        // Test harness: avoid 1s coalescer idle sleeps that dominate trigger suites.
+        blockStreamingCoalesce: { idleMs: 1 },
       },
     },
     channels: {
@@ -131,8 +133,32 @@ export function makeCfg(home: string): OpenClawConfig {
         allowFrom: ["*"],
       },
     },
+    messages: {
+      queue: {
+        debounceMs: 0,
+      },
+    },
     session: { store: join(home, "sessions.json") },
   } as OpenClawConfig;
+}
+
+export async function loadGetReplyFromConfig() {
+  return (await import("./reply.js")).getReplyFromConfig;
+}
+
+export function requireSessionStorePath(cfg: { session?: { store?: string } }): string {
+  const storePath = cfg.session?.store;
+  if (!storePath) {
+    throw new Error("expected session store path");
+  }
+  return storePath;
+}
+
+export async function readSessionStore(cfg: {
+  session?: { store?: string };
+}): Promise<Record<string, { elevatedLevel?: string }>> {
+  const storeRaw = await fs.readFile(requireSessionStorePath(cfg), "utf-8");
+  return JSON.parse(storeRaw) as Record<string, { elevatedLevel?: string }>;
 }
 
 export function makeWhatsAppElevatedCfg(
@@ -184,8 +210,7 @@ export async function runDirectElevatedToggleAndLoadStore(params: {
   if (!storePath) {
     throw new Error("session.store is required in test config");
   }
-  const storeRaw = await fs.readFile(storePath, "utf-8");
-  const store = JSON.parse(storeRaw) as Record<string, { elevatedLevel?: string }>;
+  const store = await readSessionStore(params.cfg);
   return { text, store };
 }
 
@@ -217,6 +242,7 @@ export async function runGreetingPromptForBareNewOrReset(params: {
   expect(getRunEmbeddedPiAgentMock()).toHaveBeenCalledOnce();
   const prompt = getRunEmbeddedPiAgentMock().mock.calls[0]?.[0]?.prompt ?? "";
   expect(prompt).toContain("A new session was started via /new or /reset");
+  expect(prompt).toContain("Execute your Session Startup sequence now");
 }
 
 export function installTriggerHandlingE2eTestHooks() {
