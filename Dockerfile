@@ -62,9 +62,11 @@ COPY --chown=node:node ui/package.json ./ui/package.json
 COPY --chown=node:node patches ./patches
 COPY --chown=node:node scripts ./scripts
 
+# Global npm tools installed as root so they are in PATH for the node user
+RUN npm install -g @steipete/summarize undici agent-browser clawhub
+
 USER node
 RUN pnpm install --frozen-lockfile
-RUN npm install -g @steipete/summarize gitload-cli undici agent-browser clawhub
 
 # Optionally install Chromium and Xvfb for browser automation.
 # Build with: docker build --build-arg OPENCLAW_INSTALL_BROWSER=1 ...
