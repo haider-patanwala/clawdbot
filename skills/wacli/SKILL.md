@@ -59,9 +59,9 @@ History backfill
 
 Send
 
-- Text: `wacli send text --to "+14155551212" --message "Hello! Are you free at 3pm?"`
+- Text: `wacli send text --to "14155551212" --message "Hello! Are you free at 3pm?"`
 - Group: `wacli send text --to "1234567890-123456789@g.us" --message "Running 5 min late."`
-- File: `wacli send file --to "+14155551212" --file /path/agenda.pdf --caption "Agenda"`
+- File: `wacli send file --to "14155551212" --file /path/agenda.pdf --caption "Agenda"`
 
 Notes
 
