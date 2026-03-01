@@ -1,4 +1,4 @@
-FROM node:22-bookworm
+FROM node:22-bookworm@sha256:cd7bcd2e7a1e6f72052feb023c7f6b722205d3fcab7bbcbd2d1bfdab10b1e935
 
 # Install Bun (required for build scripts)
 RUN curl -fsSL https://bun.sh/install | bash
@@ -39,8 +39,8 @@ RUN set -eux; \
     | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gog; \
   \
   # goplaces
-  curl -L https://github.com/steipete/goplaces/releases/download/v0.2.1/goplaces_0.2.1_linux_${BIN_ARCH}.tar.gz \
-    | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/goplaces; \
+  # curl -L https://github.com/steipete/goplaces/releases/download/v0.2.1/goplaces_0.2.1_linux_${BIN_ARCH}.tar.gz \
+  #   | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/goplaces; \
   \
   # wacli
   curl -L https://github.com/haider-patanwala/wacli/releases/download/v0.2.3/wacli-linux-${BIN_ARCH}.tar.gz \
@@ -62,9 +62,6 @@ COPY --chown=node:node ui/package.json ./ui/package.json
 COPY --chown=node:node patches ./patches
 COPY --chown=node:node scripts ./scripts
 
-# Global npm tools installed as root so they are in PATH for the node user
-RUN npm install -g @steipete/summarize undici agent-browser clawhub
-
 USER node
 RUN pnpm install --frozen-lockfile
 
@@ -73,6 +70,8 @@ RUN pnpm install --frozen-lockfile
 # Adds ~300MB but eliminates the 60-90s Playwright install on every container start.
 # Must run after pnpm install so playwright-core is available in node_modules.
 USER root
+# Global npm tools installed as root so they are in PATH for the node user
+RUN npm install -g @steipete/summarize undici clawhub
 ARG OPENCLAW_INSTALL_BROWSER=""
 RUN if [ -n "$OPENCLAW_INSTALL_BROWSER" ]; then \
       apt-get update && \

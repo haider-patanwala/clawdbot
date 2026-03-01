@@ -1,6 +1,6 @@
 services:
   openclaw-gateway:
-    image: clawdbot:latest
+    image: ${OPENCLAW_IMAGE:-openclaw:local}
     build: .
     restart: unless-stopped
     user: node
@@ -8,16 +8,10 @@ services:
       - .env
     environment:
       HOME: /home/node
-      NODE_ENV: production
       TERM: xterm-256color
-      OPENCLAW_GATEWAY_BIND: ${OPENCLAW_GATEWAY_BIND:-lan}
-      OPENCLAW_GATEWAY_PORT: ${OPENCLAW_GATEWAY_PORT:-18789}
       OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
-      GOG_KEYRING_PASSWORD: ${GOG_KEYRING_PASSWORD}
-      XDG_CONFIG_HOME: ${XDG_CONFIG_HOME}
-      PATH: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
-      - ${OPENCLAW_CONFIG_DIR}:/home/node/
+      - clawd:/home/node/
     ports:
       # Recommended: keep the Gateway loopback-only on the VPS; access via SSH tunnel.
       # To expose it publicly, remove the `127.0.0.1:` prefix and firewall accordingly.
