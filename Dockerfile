@@ -169,4 +169,4 @@ ENV NODE_ENV=production
 
 USER node
 
-CMD ["node","openclaw.mjs","gateway","--allow-unconfigured","--bind","lan"]
+CMD ["node","openclaw.mjs","gateway","--allow-unconfigured"]
